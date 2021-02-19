@@ -22,12 +22,14 @@ services:
       - laravel
 
   mysql:
-    image: mysql:5.7.29
+    image: mysql:8.0
     container_name: mysql
     restart: unless-stopped
     tty: true
     ports:
       - 3306:3306
+    volumes:
+      - ./mysql:/var/lib/mysql
     environment:
       MYSQL_DATABASE: homestead
       MYSQL_USER: homestead
@@ -43,6 +45,8 @@ services:
       context: .
       dockerfile: php.dockerfile
     container_name: php
+    ports:
+      - 6001:6001
     volumes:
       - ./src:/var/www/html:delegated
     networks:

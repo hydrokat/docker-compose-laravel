@@ -10,7 +10,30 @@ RUN chown laravel:laravel /var/www/html
 
 WORKDIR /var/www/html
 
-RUN docker-php-ext-install pdo pdo_mysql
+RUN apk add zip unzip curl libpng-dev
+RUN apk add nodejs npm
+
+RUN apk --update add wget \
+    curl \
+    git \
+    grep \
+    build-base \
+    libmemcached-dev \
+    libmcrypt-dev \
+    libxml2-dev \
+    imagemagick-dev \
+    pcre-dev \
+    libtool \
+    make \
+    autoconf \
+    g++ \
+    cyrus-sasl-dev \
+    libgsasl-dev \
+    php-mbstring
+
+RUN docker-php-ext-install pdo pdo_mysql tokenizer xml bcmath
+
+RUN rm /var/cache/apk/* 
 
 # Install SUPERVISOR
 

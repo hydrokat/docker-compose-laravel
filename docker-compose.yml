@@ -101,6 +101,18 @@ services:
     networks:
       - laravel
 
+  cron:
+    build:
+      context: .
+      dockerfile: cron.dockerfile
+    container_name: cron
+    volumes: 
+      - ./src:/var/www/html
+    networks:
+      - laravel
+    depends_on:
+      - site
+
   mailhog:
     image: mailhog/mailhog:latest
     container_name: mailhog

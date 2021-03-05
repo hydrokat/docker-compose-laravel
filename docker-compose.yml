@@ -16,6 +16,7 @@ services:
     depends_on:
       - php
       - redis
+      - cron
       - mysql
       - mailhog
     networks:
@@ -110,8 +111,6 @@ services:
       - ./src:/var/www/html
     networks:
       - laravel
-    depends_on:
-      - site
 
   mailhog:
     image: mailhog/mailhog:latest

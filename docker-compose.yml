@@ -11,6 +11,7 @@ services:
     container_name: nginx
     ports:
       - 80:80
+      - 6001:6001
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:
@@ -45,9 +46,21 @@ services:
     build:
       context: .
       dockerfile: php.dockerfile
-    container_name: php
-    ports:
-      - 6001:6001
+    deploy:
+      replicas: 4
+    volumes:
+      - ./src:/var/www/html:delegated
+    networks:
+      - laravel
+
+  phpws:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    deploy:
+      replicas: 4
+    # ports:
+    #   - 6001:6001
     volumes:
       - ./src:/var/www/html:delegated
     networks:

@@ -31,7 +31,8 @@ RUN apk --update add wget \
     libgsasl-dev \
     php-mbstring
 
-RUN docker-php-ext-install pdo pdo_mysql tokenizer xml bcmath
+RUN docker-php-ext-install pdo pdo_mysql xml bcmath
+# tokenizer
 
 RUN rm /var/cache/apk/* 
 

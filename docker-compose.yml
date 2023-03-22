@@ -11,7 +11,7 @@ services:
       dockerfile: nginx.dockerfile
     ports:
       - 80:80
-      - 6001:6001
+      # - 6001:6001 uncomment when using laravel-ws
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:

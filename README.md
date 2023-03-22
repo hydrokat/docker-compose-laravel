@@ -41,7 +41,7 @@ By default, whenever you bring down the Docker network, your MySQL data will be 
 
 ```
 volumes:
-  - ./mysql:/var/lib/mysql
+  - ./data/mysql:/var/lib/mysql
 ```
 
 ## MailHog

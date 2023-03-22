@@ -3,12 +3,13 @@ version: '3'
 networks:
   laravel:
 
+
 services:
   site:
     build:
       context: .
       dockerfile: nginx.dockerfile
-    container_name: nginx
+    container_name: ${APP_NAME}-nginx
     ports:
       - 80:80
       - 6001:6001
@@ -25,7 +26,7 @@ services:
 
   mysql:
     image: mysql:8
-    container_name: mysql
+    container_name: ${APP_NAME}-mysql
     restart: unless-stopped
     tty: true
     ports:
@@ -34,8 +35,8 @@ services:
       - ./data/mysql:/var/lib/mysql
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME} 
-      MYSQL_PASSWORD: ${DB_PASSWORD} 
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
@@ -43,6 +44,7 @@ services:
       - laravel
 
   php:
+    container_name: ${APP_NAME}-php
     build:
       context: .
       dockerfile: php.dockerfile
@@ -61,6 +63,7 @@ services:
       - laravel
 
   phpws:
+    container_name: ${APP_NAME}-phpws
     build:
       context: .
       dockerfile: php.dockerfile
@@ -82,7 +85,7 @@ services:
 
   redis:
     image: redis:alpine
-    container_name: redis
+    container_name: ${APP_NAME}-redis
     restart: unless-stopped
     ports:
       - 6379:6379
@@ -100,17 +103,17 @@ services:
     depends_on:
       - php
     user: laravel
-    entrypoint: ['composer', '--ignore-platform-reqs']
+    entrypoint: [ 'composer', '--ignore-platform-reqs' ]
     networks:
       - laravel
 
   npm:
     image: node:13.7
-    container_name: npm
+    container_name: ${APP_NAME}-npm
     volumes:
       - ./src:/var/www/html
     working_dir: /var/www/html
-    entrypoint: ['npm']
+    entrypoint: [ 'npm' ]
     networks:
       - laravel
 
@@ -118,14 +121,14 @@ services:
     build:
       context: .
       dockerfile: php.dockerfile
-    container_name: artisan
+    container_name: ${APP_NAME}-artisan
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:
       - mysql
     working_dir: /var/www/html
     user: laravel
-    entrypoint: ['php', '/var/www/html/artisan']
+    entrypoint: [ 'php', '/var/www/html/artisan' ]
     networks:
       - laravel
 
@@ -133,8 +136,8 @@ services:
     build:
       context: .
       dockerfile: cron.dockerfile
-    container_name: cron
-    volumes: 
+    container_name: ${APP_NAME}-cron
+    volumes:
       - ./src:/var/www/html
     networks:
       - laravel
@@ -149,32 +152,34 @@ services:
       - laravel
 
   postgres:
-      image: postgres
-      volumes:
-        - ./data/postgres:/var/lib/postgresql/data
-      environment:
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: keycloak
-        POSTGRES_PASSWORD: password
-      networks:
-        - laravel
+    container_name: ${APP_NAME}-postgres
+    image: postgres
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    networks:
+      - laravel
 
   keycloak:
-      image: quay.io/keycloak/keycloak:latest
-      environment:
-        DB_VENDOR: POSTGRES
-        DB_ADDR: postgres
-        DB_DATABASE: keycloak
-        DB_USER: keycloak
-        DB_SCHEMA: public
-        DB_PASSWORD: password
-        KEYCLOAK_USER: admin
-        KEYCLOAK_PASSWORD: Pa55w0rd
-        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-        #JDBC_PARAMS: "ssl=true"
+    container_name: ${APP_NAME}-keycloak
+    image: quay.io/keycloak/keycloak:legacy
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
       # ports:
       #   - 8080:8080
-      depends_on:
-        - postgres
-      networks:
-        - laravel
+    depends_on:
+      - postgres
+    networks:
+      - laravel

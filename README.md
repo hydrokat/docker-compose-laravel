@@ -30,7 +30,11 @@ Three additional containers are included that handle Composer, NPM, and Artisan 
 ### Code on Laravel
 
 - `cd src`
-- `composer install`
+- `composer install` or `docker`
+
+or
+
+- `docker-compose run --rm composer install` without the `cd src`
 
 ## Persistent MySQL Storage
 

@@ -62,4 +62,4 @@ After installation, uncomment the websocket configuration from the `docker-compo
 
 ## Laravel Pint
 
-To be consistent with your code styling, [Laravel Pint](https://laravel.com/docs/10.x/pint) is implemented. To run Pint, execute the following commands: `docker-compose up --build -d pint` then `docker-compose exec -T pint ./vendor/bin/pint` and finally `docker-compose down`. You can even add these commands as part of your pre-commit hooks.
+To be consistent with your code styling, [Laravel Pint](https://laravel.com/docs/10.x/pint) is implemented. To run Pint, execute the following commands: `docker-compose up --build -d pint` then `docker-compose exec -T pint ./vendor/bin/pint` and finally `docker-compose down`. You can even add these commands as part of your pre-commit hooks. Like [this](https://gist.github.com/hydrokat/474ee783348b36a6fc8f39ecc321854a)

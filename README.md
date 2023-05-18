@@ -30,18 +30,22 @@ Three additional containers are included that handle Composer, NPM, and Artisan 
 ### Code on Laravel
 
 - `cd src`
-- `composer install`
+- `composer install` or `docker`
+
+or
+
+- `docker-compose run --rm composer install` without the `cd src`
 
 ## Persistent MySQL Storage
 
 By default, whenever you bring down the Docker network, your MySQL data will be removed after the containers are destroyed. If you would like to have persistent data that remains after bringing containers down and back up, do the following:
 
-1. Create a `mysql` folder in the project root, alongside the `nginx` and `src` folders.
+1. Create a `./data/mysql` folder in the project root, alongside the `nginx` and `src` folders.
 2. Under the mysql service in your `docker-compose.yml` file, add the following lines:
 
 ```
 volumes:
-  - ./mysql:/var/lib/mysql
+  - ./data/mysql:/var/lib/mysql
 ```
 
 ## MailHog
@@ -49,3 +53,13 @@ volumes:
 The current version of Laravel (8 as of today) uses MailHog as the default application for testing email sending and general SMTP work during local development. Using the provided Docker Hub image, getting an instance set up and ready is simple and straight-forward. The service is included in the `docker-compose.yml` file, and spins up alongside the webserver and database services.
 
 To see the dashboard and view any emails coming through the system, visit [localhost:8025](http://localhost:8025) after running `docker-compose up -d site`.
+
+## Laravel Websocket 
+
+This project uses [Laravel Websockets](https://beyondco.de/docs/laravel-websockets/getting-started/introduction). To use, install the package in your project by following the [guide here](https://beyondco.de/docs/laravel-websockets/getting-started/installation). Note: Use the built-in composer and containers eg `docker-compose run --rm composer require beyondcode/laravel-websockets`, `docker-compose run --rm artisan vendor:publish --provider="BeyondCode\LaravelWebSockets\WebSocketsServiceProvider" --tag="migrations"`.
+
+After installation, uncomment the websocket configuration from the `docker-compose.yml`, `supervisor/supervisord.conf` , and `nginx/default.conf` files. Restart the containers to make sure all the configurations are loaded.
+
+## Laravel Pint
+
+To be consistent with your code styling, [Laravel Pint](https://laravel.com/docs/10.x/pint) is implemented. To run Pint, execute the following commands: `docker-compose up --build -d pint` then `docker-compose exec -T pint ./vendor/bin/pint` and finally `docker-compose down`. You can even add these commands as part of your pre-commit hooks.

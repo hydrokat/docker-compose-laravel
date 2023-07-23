@@ -30,7 +30,11 @@ Three additional containers are included that handle Composer, NPM, and Artisan 
 ### Code on Laravel
 
 - `cd src`
-- `composer install`
+- `composer install` or `docker`
+
+or
+
+- `docker-compose run --rm composer install` without the `cd src`
 
 ## Persistent MySQL Storage
 
@@ -55,3 +59,7 @@ To see the dashboard and view any emails coming through the system, visit [local
 This project uses [Laravel Websockets](https://beyondco.de/docs/laravel-websockets/getting-started/introduction). To use, install the package in your project by following the [guide here](https://beyondco.de/docs/laravel-websockets/getting-started/installation). Note: Use the built-in composer and containers eg `docker-compose run --rm composer require beyondcode/laravel-websockets`, `docker-compose run --rm artisan vendor:publish --provider="BeyondCode\LaravelWebSockets\WebSocketsServiceProvider" --tag="migrations"`.
 
 After installation, uncomment the websocket configuration from the `docker-compose.yml`, `supervisor/supervisord.conf` , and `nginx/default.conf` files. Restart the containers to make sure all the configurations are loaded.
+
+## Laravel Pint
+
+To be consistent with your code styling, [Laravel Pint](https://laravel.com/docs/10.x/pint) is implemented. To run Pint, execute the following commands: `docker-compose up --build -d pint` then `docker-compose exec -T pint ./vendor/bin/pint` and finally `docker-compose down`. You can even add these commands as part of your pre-commit hooks. Like [this](https://gist.github.com/hydrokat/474ee783348b36a6fc8f39ecc321854a)

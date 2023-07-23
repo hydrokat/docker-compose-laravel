@@ -101,6 +101,17 @@ services:
     networks:
       - laravel
 
+  pint:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www/html:delegated
+    working_dir: /var/www/html
+    user: laravel
+    networks:
+      - laravel
+
   npm:
     image: node:13.7
     volumes:
@@ -128,6 +139,7 @@ services:
     build:
       context: .
       dockerfile: cron.dockerfile
+    container_name: cron
     volumes:
       - ./src:/var/www/html
     networks:
@@ -144,6 +156,7 @@ services:
   postgres:
     image: postgres
     volumes:
+      # - postgres_data:/var/lib/postgresql/data
       - ./data/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: keycloak
@@ -153,6 +166,7 @@ services:
       - laravel
 
   keycloak:
+    # image: quay.io/keycloak/keycloak:latest
     image: quay.io/keycloak/keycloak:legacy
     environment:
       DB_VENDOR: POSTGRES
@@ -169,5 +183,44 @@ services:
       #   - 8080:8080
     depends_on:
       - postgres
+    networks:
+      - laravel
+
+  vroom-frontend:
+    image: node:lts-alpine
+    volumes:
+      - ./osrm/vroom-frontend:/usr/app
+    working_dir: /usr/app
+    ports:
+      - 5003:9966
+    depends_on:
+      - vroom
+    networks:
+      - laravel
+    command: "npm run serve"
+
+  vroom:
+    image: vroomvrp/vroom-docker:v1.11.0
+    container_name: vroom
+    volumes:
+      - ./osrm/vroom-conf/:/conf
+    environment:
+      - VROOM_ROUTER=osrm # router to use, osrm, valhalla or ors
+    ports:
+      - 5002:3000
+    depends_on:
+      - osrm
+    networks:
+      - laravel
+
+  osrm:
+    image: osrm/osrm-backend
+    container_name: osrm
+    restart: always
+    # ports:
+    #   - 5001:5000
+    volumes:
+      - ./osrm/data:/data
+    command: "osrm-routed --max-matching-size 1000 --max-table-size 1000 --max-viaroute-size 1000 --algorithm mld /data/philippines-latest.osrm"
     networks:
       - laravel

@@ -19,7 +19,7 @@ services:
       - redis
       - cron
       - mysql
-      - mailhog
+      - mailpit
     networks:
       - laravel
 
@@ -145,8 +145,8 @@ services:
     networks:
       - laravel
 
-  mailhog:
-    image: mailhog/mailhog:latest
+  mailpit:
+    image: axllent/mailpit:latest
     ports:
       - 1025:1025
       - 8025:8025

@@ -29,10 +29,11 @@ RUN apk --update add wget \
     g++ \
     cyrus-sasl-dev \
     libgsasl-dev \
-    php-mbstring
+    php-mbstring \
+    icu-dev 
 
+RUN docker-php-ext-configure intl && docker-php-ext-install intl
 RUN docker-php-ext-install pdo pdo_mysql xml bcmath
-# tokenizer
 
 RUN rm /var/cache/apk/* 
 

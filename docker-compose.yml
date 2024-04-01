@@ -15,11 +15,33 @@ services:
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:
-      - php
       - redis
-      - cron
       - mysql
+      - php
+      - queue-worker
+      - cron
       - mailpit
+      # - keycloak #uncomment if using keycloak for auth
+    networks:
+      - laravel
+
+  php:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: frankenphp.dockerfile
+    volumes:
+      - ./src:/app:delegated
+    networks:
+      - laravel
+
+  queue-worker:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www/html:delegated
     networks:
       - laravel
 
@@ -38,24 +60,6 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
-    networks:
-      - laravel
-
-  php:
-    build:
-      context: .
-      dockerfile: php.dockerfile
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
-      replicas: 4
-    volumes:
-      - ./src:/var/www/html:delegated
     networks:
       - laravel
 
@@ -94,26 +98,29 @@ services:
     volumes:
       - ./src:/var/www/html
     working_dir: /var/www/html
-    depends_on:
-      - php
     user: laravel
     entrypoint: [ 'composer', '--ignore-platform-reqs' ]
     networks:
       - laravel
 
   pint:
-    build:
-      context: .
-      dockerfile: php.dockerfile
+    image: syncloudsoftech/pinter
     volumes:
-      - ./src:/var/www/html:delegated
-    working_dir: /var/www/html
-    user: laravel
+      - ./src:/workspace
     networks:
       - laravel
 
   npm:
-    image: node:13.7
+    image: node:lts
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: [ 'npm' ]
+    networks:
+      - laravel
+
+  npx:
+    image: node:lts
     volumes:
       - ./src:/var/www/html
     working_dir: /var/www/html
@@ -155,6 +162,7 @@ services:
 
   postgres:
     image: postgres
+    restart: unless-stopped
     volumes:
       # - postgres_data:/var/lib/postgresql/data
       - ./data/postgres:/var/lib/postgresql/data
@@ -168,6 +176,7 @@ services:
   keycloak:
     # image: quay.io/keycloak/keycloak:latest
     image: quay.io/keycloak/keycloak:legacy
+    restart: unless-stopped
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres

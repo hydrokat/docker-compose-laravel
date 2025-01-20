@@ -21,7 +21,7 @@ Follow the steps from the [src/README.md](src/README.md) file to get your Larave
 If you already have a project and want dockerize it with this docker compose project, just copy your source code to `./src`. Create a new `./src` directory if it's not there yet. If you want to create a new project:
 
 - Delete the `./src` directory if there is one.
-- Run `docker compose run --rm composer create-project laravel/laravel:^11.0 .`. This command will run the laravel installation process.
+- Run `docker compose run --rm installer`. This command will run the laravel installation process.
 
 ## Running the project
 Running the project is as easy as running `docker-compose up -d --build site`. You may omit `-d` if you want to see the web server's request logs.

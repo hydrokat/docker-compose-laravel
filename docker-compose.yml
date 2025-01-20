@@ -103,6 +103,18 @@ services:
     networks:
       - laravel
 
+  installer:
+    build:
+      context: .
+      dockerfile: composer.dockerfile
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    user: laravel
+    entrypoint: [ 'composer', 'create-project', '--prefer-dist', 'laravel/laravel', '.' ]
+    networks:
+      - laravel
+
   pint:
     image: syncloudsoftech/pinter
     volumes:
